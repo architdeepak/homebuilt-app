@@ -29,7 +29,7 @@ function App() {
         formData.append("image", image);
         formData.append("instruction", input);
 
-        const imageRes = await fetch("http://localhost:5000/api/edit-image", {
+        const imageRes = await fetch("https://backend-homebuilt-benji.onrender.com/api/edit-image", {
           method: "POST",
           body: JSON.stringify({ image: await fileToBase64(image), instruction: input }),
           headers: { "Content-Type": "application/json" },
@@ -48,7 +48,7 @@ function App() {
         }
       } else {
         // Send text to Gemini API for chat
-        const chatRes = await fetch("http://localhost:5000/api/chat", {
+        const chatRes = await fetch("https://backend-homebuilt-benji.onrender.com/api/chat", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ message: input }),
