@@ -6,7 +6,7 @@ import { Client } from "@gradio/client";
 import fs from "fs"; // To handle image file operations
 
 const app = express();
-const PORT = 5000;
+const PORT = process.env.PORT || 5000; // ✅ Use dynamic port for Render
 
 // Middleware
 app.use(cors());
@@ -21,6 +21,11 @@ const client = await Client.connect("taesiri/Gemini-Text-based-Image-Editor");
 
 // Define a prompt that Gemini will follow for all responses
 const basePrompt = "Please respond in a helpful, friendly, and professional manner, assisting with DIY projects. Keep your responses clear and simple, as if you were explaining it to someone who is a beginner.";
+
+// ✅ Health check endpoint
+app.get("/api/health", (req, res) => {
+  res.json({ status: "✅ Backend is up!" });
+});
 
 // Chat API endpoint
 app.post("/api/chat", async (req, res) => {
@@ -55,7 +60,7 @@ app.post("/api/edit-image", async (req, res) => {
     const imageBlob = Buffer.from(image.split(",")[1], "base64");
 
     const result = await client.predict("/process_image", {
-      image: imageBlob, 
+      image: imageBlob,
       instruction: instruction
     });
 
