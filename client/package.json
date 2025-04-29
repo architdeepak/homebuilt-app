@@ -33,6 +33,7 @@
       "not dead",
       "not op_mini all"
     ],
+    
     "development": [
       "last 1 chrome version",
       "last 1 firefox version",
@@ -41,5 +42,6 @@
   },
   "devDependencies": {
     "@gradio/client": "^1.14.1"
-  }
+  },
+  "proxy": "https://your-backend-service.onrender.com"
 }
