@@ -2,6 +2,11 @@ import React, { useState } from "react";
 import "./App.css";
 import logo from "./logo.png"; // Ensure logo.png is in the src folder
 
+// ✅ Dynamic backend URL based on environment
+const backendUrl = process.env.NODE_ENV === "production"
+  ? "https://homebuilt-backend.onrender.com"
+  : "http://localhost:5000";
+
 function App() {
   const [messages, setMessages] = useState([
     { text: "Hi! I'm Benji AI. Upload an image and ask questions about it.", sender: "ai" },
@@ -24,31 +29,27 @@ function App() {
       let chatResponse = null;
 
       if (image && isImageEditor) {
-        // Send image to Gemini Text-based Image Editor API
         const formData = new FormData();
         formData.append("image", image);
         formData.append("instruction", input);
 
-        const imageRes = await fetch("https://backend-homebuilt-benji.onrender.com/api/edit-image", {
+        const imageRes = await fetch(`${backendUrl}/api/edit-image`, {
           method: "POST",
           body: JSON.stringify({ image: await fileToBase64(image), instruction: input }),
           headers: { "Content-Type": "application/json" },
         });
 
         const imageData = await imageRes.json();
-        
-        // Use the image URL returned from the backend to update the image preview
         const editedImageUrl = imageData.result[0]?.url;
 
         if (editedImageUrl) {
-          setImagePreview(editedImageUrl);  // Set the image preview to the edited image URL
+          setImagePreview(editedImageUrl);
           chatResponse = `Edited the image!`;
         } else {
           chatResponse = "⚠️ Error with image editing.";
         }
       } else {
-        // Send text to Gemini API for chat
-        const chatRes = await fetch("https://backend-homebuilt-benji.onrender.com/api/chat", {
+        const chatRes = await fetch(`${backendUrl}/api/chat`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ message: input }),
@@ -74,7 +75,6 @@ function App() {
     const file = e.target.files[0];
     setImage(file);
 
-    // Create a URL for the image to be shown as a preview
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
@@ -88,7 +88,6 @@ function App() {
     setIsImageEditor(!isImageEditor);
   };
 
-  // Convert image to base64 to send to the backend
   const fileToBase64 = (file) => {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
@@ -101,7 +100,6 @@ function App() {
   return (
     <div className="App">
       <div className="main-content">
-        {/* Chat Box */}
         <div className="chat-container">
           <div className="chat-header">Benji AI – Your DIY Assistant</div>
           <div className="chat-messages">
@@ -135,22 +133,20 @@ function App() {
               type="file"
               accept="image/*"
               style={{ display: "none" }}
-              onChange={handleImageChange} // Update image preview
+              onChange={handleImageChange}
             />
           </div>
 
-          {/* Switch Models Button */}
           <button onClick={handleModelSwitch} className="switch-model-btn">
             O {isImageEditor ? "1" : "2"}
           </button>
         </div>
 
-        {/* Image Preview - Always Displayed */}
         {imagePreview && (
           <div className="image-viewer">
             <div className="image-header">Image Preview</div>
             <div className="image-box">
-              <img src={imagePreview} alt="Uploaded Image" className="image-preview" />
+              <img src={imagePreview} alt="Uploaded" className="image-preview" />
             </div>
           </div>
         )}
