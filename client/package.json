@@ -43,5 +43,5 @@
   "devDependencies": {
     "@gradio/client": "^1.14.1"
   },
-  "proxy": "https://your-backend-service.onrender.com"
+  "proxy": "hhttps://homebuilt-backend.onrender.com"
 }
